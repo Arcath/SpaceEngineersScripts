@@ -41,7 +41,12 @@ public static string[][] AIRLOCKS =
   },
 };
 
+
+// The number of Timer Block cycles required to close a door
+public static int CYCLES_TO_CHANGE_STATE = 1;
+
 // DO NOT EDIT BELOW THIS LINE
+public static int DOOR_CYCLE = 0;
 
 void handleAirlock(string[] airlock) {
   IMyDoor outerDoor = (IMyDoor)GridTerminalSystem.GetBlockWithName(airlock[0]);
@@ -60,10 +65,18 @@ void handleAirlock(string[] airlock) {
     if(innerDoor.Open)
     {
       innerDoor.GetActionWithName("Open_Off").Apply(innerDoor);
+      DOOR_CYCLE = CYCLES_TO_CHANGE_STATE;
     }
     else
     {
-      innerDoor.GetActionWithName("OnOff_Off").Apply(innerDoor);
+      if(DOOR_CYCLE == 0)
+      {
+        innerDoor.GetActionWithName("OnOff_Off").Apply(innerDoor);
+      }
+      else
+      {
+        DOOR_CYCLE -= 1;
+      }
     }
     outerDoor.GetActionWithName("OnOff_On").Apply(outerDoor);
   }
